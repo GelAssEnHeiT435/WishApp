@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:Component="clr-namespace:WishListClient.src.Components"
+             xmlns:models="clr-namespace:WishListClient.src.Models"
+             x:Class="WishListClient.src.Pages.MainPage"
+             Padding="0" x:Name="Root">
+    <AbsoluteLayout>
+        <ContentView AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                     AbsoluteLayout.LayoutFlags="All">
+
+            <Grid RowDefinitions="Auto, *">
+                <VerticalStackLayout>
+                    <Label TextColor="{StaticResource OnBackground}"
+                       VerticalOptions="Center"
+                       Text="Список желаний"
+                       FontAttributes="Bold"
+                       FontSize="28"
+                       Margin="20, 20, 20, 15"/>
+                    <BoxView BackgroundColor="{StaticResource Primary}"
+                             HeightRequest="1"
+                             Margin="15, 0"/>
+                </VerticalStackLayout>
+                
+
+                <CollectionView Grid.Row="1" 
+                                ItemsSource="{Binding Wishes}">
+
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="0"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Wish">
+                            <Grid ColumnDefinitions="*" HorizontalOptions="Fill">
+                                <Border x:Name="itemBorder"
+                                        Grid.Column="0"
+                                        StrokeThickness="0" 
+                                        Background="{StaticResource Primary}"
+                                        HorizontalOptions="Fill" 
+                                        Padding="10"
+                                        Margin="15, 5">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="20" />
+                                    </Border.StrokeShape>
+
+                                    <Border.Behaviors>
+                                        <toolkit:TouchBehavior 
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.GoToDetailsCommand}"
+                                            CommandParameter="{Binding Source={x:Reference itemBorder}, Path=BindingContext}"
+                                            PressedScale="0.95"/>
+                                    </Border.Behaviors>
+
+                                    <Label Text="{Binding Title}" 
+                                           HorizontalOptions="Start"
+                                           FontSize="16" Margin="10, 0"
+                                           TextColor="{StaticResource OnPrimary}"/>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout HorizontalOptions="Center"
+                                             VerticalOptions="Center"
+                                             Spacing="5">
+
+                            <ActivityIndicator IsRunning="True"
+                                               Color="White"
+                                               WidthRequest="50"
+                                               HeightRequest="50"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                            <Label Text="Загрузка списка желаний..."
+                                   FontSize="18"/>
+                            
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+
+            </Grid>
+        </ContentView>
+
+        <HorizontalStackLayout Spacing="5" Margin="20"
+                               AbsoluteLayout.LayoutBounds="1, 1, -1, -1"
+                               AbsoluteLayout.LayoutFlags="PositionProportional">
+            <Component:IconButton Data="{StaticResource Update}"
+                                  BackgroundColor="{StaticResource Tertiary}"
+                                  IconColor="{StaticResource White}"
+                                  BorderColor="{StaticResource MidnightBlue}"
+                                  Command="{Binding BindingContext.UpdateListCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                  ButtonSize="60"
+                                  IconSize="25"/>
+
+            <Component:IconButton Data="{StaticResource Plus}"
+                                  BackgroundColor="{StaticResource Tertiary}"
+                                  IconColor="{StaticResource White}"
+                                  BorderColor="{StaticResource MidnightBlue}"
+                                  Command="{Binding BindingContext.GoToAddWishCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                  ButtonSize="60"
+                                  IconSize="25"/>
+
+        </HorizontalStackLayout>
+    </AbsoluteLayout>
+</ContentPage>

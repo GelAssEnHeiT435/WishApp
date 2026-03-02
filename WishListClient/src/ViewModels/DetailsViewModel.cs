@@ -1,0 +1,55 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using WishListClient.src.Models;
+using WishListClient.src.Pages;
+using WishListClient.src.Services;
+
+namespace WishListClient.src.ViewModels
+{
+    [QueryProperty(nameof(WishId), "id")]
+    public partial class DetailsViewModel: ObservableObject
+    {
+        private readonly WishlistService _wishlist;
+
+        public DetailsViewModel(WishlistService wishlist) =>
+            _wishlist = wishlist;
+
+        [ObservableProperty] private ImageSource? _image;
+
+        [ObservableProperty] private Wish _wish;
+        public string WishId
+        {
+            get => _wishId;
+            set
+            {
+                if (value != null)
+                {
+                    _wishId = value;
+                    Wish = _wishlist.GetWishById(Guid.Parse(value))!;
+                    Image = ImageSource.FromUri(new Uri(Wish?.Url));
+                }
+            }
+        }
+        private string _wishId;
+
+        [RelayCommand]
+        private async Task GoToEdit() =>
+            await Shell.Current.GoToAsync($"{nameof(AddWishPage)}?mode=edit&id={WishId}");
+
+        [RelayCommand]
+        private async Task OnDelete()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
+        private async Task GoToBack() =>
+            await Shell.Current.GoToAsync("..");
+
+    }
+}

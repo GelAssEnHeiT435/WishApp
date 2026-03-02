@@ -1,0 +1,15 @@
+/WishLishServer/.vs
+WishLishServer/appsettings.json
+WishLishServer/bin/Debug/net10.0/appsettings.Development.json
+/WishLishServer/bin
+WishLishServer/appsettings.Development.json
+/WishLishServer/obj
+WishLishServer/Properties/launchSettings.json
+/WishLishServer/src
+WishLishServer/WishListServer.csproj.user
+WishLishServer/WishListServer.slnx
+/WishListClient/.vs
+/WishListClient/bin
+/WishListClient/obj
+WishListClient/WishListClient.slnx
+WishListClient/WishListClient.csproj.user

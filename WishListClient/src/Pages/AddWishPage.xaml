@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Component="clr-namespace:WishListClient.src.Components"
+             x:Class="WishListClient.src.Pages.AddWishPage">
+    <VerticalStackLayout Margin="20">
+        
+        <Label Text="{Binding PageTitle}" 
+               FontAttributes="Bold"
+               FontSize="28"/>
+
+        <Grid ColumnDefinitions="auto, *"
+              Margin="0">
+            <Component:ImageLoaderButton ButtonSize="100"
+                                         IconData="{StaticResource AddImage}"
+                                         IconColor="{StaticResource White}"
+                                         Command="{Binding BindingContext.PickPhotoCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                         PhotoSource="{Binding BindingContext.Image, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
+
+            <VerticalStackLayout Grid.Column="1"
+                                 VerticalOptions="Center"
+                                 Spacing="10"
+                                 Margin="15">
+                <Entry Placeholder="Наименование"
+                       Text="{Binding Title, UpdateSourceEventName=TextChanged, Mode=TwoWay}"/>
+
+                <Editor Placeholder="Описание"
+                        Text="{Binding Description, Mode=TwoWay}"
+                        HeightRequest="75"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <HorizontalStackLayout VerticalOptions="Center"
+                               Margin="0, -5, 0, 15">
+            <CheckBox IsChecked="{Binding IsReceived, Mode=TwoWay}"/>
+            <Label Text="Получено"
+                   VerticalTextAlignment="Center"/>
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Spacing="15">
+            <Button Command="{Binding CreateWishCommand}"
+                    Text="{Binding ButtonTitle}"/>
+
+            <Button Command="{Binding GoBackCommand}"
+                    Text="Назад"/>
+        </VerticalStackLayout>
+        
+    </VerticalStackLayout>
+</ContentPage>

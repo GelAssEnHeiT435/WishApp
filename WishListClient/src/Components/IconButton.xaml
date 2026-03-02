@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="WishListClient.src.Components.IconButton"
+             x:Name="Root">
+    <Border 
+        StrokeShape="RoundRectangle 20" 
+        StrokeThickness="{Binding BorderThickness}"
+        Stroke="{Binding BorderColor}"
+        BackgroundColor="{Binding BackgroundColor}"
+        WidthRequest="{Binding ButtonSize}"
+        HeightRequest="{Binding ButtonSize}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <Border.Behaviors>
+            <toolkit:TouchBehavior 
+                Command="{Binding Source={x:Reference Root}, Path=Command}"
+                CommandParameter="{Binding Source={x:Reference Root}, Path=CommandParameter}"
+                PressedScale="0.9"/>
+        </Border.Behaviors>
+
+        <Path Data="{Binding Data}" 
+              Fill="{Binding IconColor}"
+              Aspect="Uniform"
+              WidthRequest="{Binding IconSize}"
+              HeightRequest="{Binding IconSize}" 
+              HorizontalOptions="Center"
+              VerticalOptions="Center" 
+              Margin="10"/>
+
+    </Border>
+</ContentView>
