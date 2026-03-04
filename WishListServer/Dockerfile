@@ -10,7 +10,7 @@ COPY . .
 WORKDIR "/src/."
 
 # publish project
-RUN dotnet publish "./WishLishServer.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./WishListServer.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
