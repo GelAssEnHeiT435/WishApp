@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
@@ -14,9 +15,16 @@ namespace WishListServer
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
             // Add services to the container.
             builder.Services.AddDbContext<ApplicationContext>(options =>
-                options.UseNpgsql(builder.Configuration["Connections:Postgres"]));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddOptions<PathsOptions>()
                 .BindConfiguration("Paths")
@@ -32,6 +40,8 @@ namespace WishListServer
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
             var app = builder.Build();
+
+            app.UseForwardedHeaders();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
