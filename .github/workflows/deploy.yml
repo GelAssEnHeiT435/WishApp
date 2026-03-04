@@ -21,7 +21,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./WishListServer
           file: ./WishListServer/Dockerfile
           push: true
           tags: |
