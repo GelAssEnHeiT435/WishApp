@@ -51,6 +51,7 @@ jobs:
               --restart unless-stopped \
               --network app-network \
               -p 8080:8080 \
+              -v /home/wishlist/app-data/images:/app/src/assets/images \
               -e ConnectionStrings__DefaultConnection="${{ secrets.DB_CONNECTION_STRING }}" \
               $IMAGE_NAME:latest
 
