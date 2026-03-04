@@ -22,7 +22,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./WishListServer
-          file: ./Dockerfile
+          file: ./WishListServer/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/wishlist-api:${{ github.sha }}
