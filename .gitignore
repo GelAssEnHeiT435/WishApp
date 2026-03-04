@@ -5,7 +5,7 @@ WishListServer/bin/Debug/net10.0/appsettings.Development.json
 WishListServer/appsettings.Development.json
 /WishListServer/obj
 WishListServer/Properties/launchSettings.json
-/WishListServer/src
+/WishListServer/src/assets
 WishListServer/WishListServer.csproj.user
 WishListServer/WishListServer.slnx
 /WishListClient/.vs
