@@ -20,8 +20,7 @@ namespace WishListServer.src.Controllers
         [HttpGet]
         public async Task<ActionResult<IReadOnlyCollection<WishDto>>> GetWishes(CancellationToken ct)
         {
-            var ipAddress = "10.111.121.61:5073";
-            string url = $"{Request.Scheme}://{ipAddress /*Request.Host*/}";
+            string url = $"{Request.Scheme}://{Request.Host}";
 
             GetWishesCommand command = new GetWishesCommand(url);
             IReadOnlyCollection<WishDto> wishes = await _mediator.Send(command, ct);
@@ -34,8 +33,7 @@ namespace WishListServer.src.Controllers
             Guid wishId, 
             CancellationToken ct)
         {
-            var ipAddress = "10.111.121.61:5073";
-            string url = $"{Request.Scheme}://{ipAddress /*Request.Host*/}";
+            string url = $"{Request.Scheme}://{Request.Host}";
             GetWishByIdCommand command = new GetWishByIdCommand(wishId, url);
 
             try
@@ -67,9 +65,8 @@ namespace WishListServer.src.Controllers
 
             CreateWishResult? result = await _mediator.Send(command, ct);
 
-            var ipAddress = "10.111.121.61:5073";
             result.Path = result.Path != null
-                ? $"{Request.Scheme}://{ipAddress/*Request.Host*/}{result.Path}"
+                ? $"{Request.Scheme}://{Request.Host}{result.Path}"
                 : null;
 
             return Ok(result);
