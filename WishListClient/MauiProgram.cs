@@ -27,10 +27,9 @@ namespace WishListClient
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-            string url = "http://10.111.121.61:5073";
 
             builder.Services.AddRefitClient<IWishListApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(url));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://194.67.127.232:8080"));
 
             builder.Services.AddSingleton<MainViewModel>();
             builder.Services.AddSingleton<AddWishViewModel>();
