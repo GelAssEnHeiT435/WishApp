@@ -58,7 +58,7 @@ namespace WishListServer
                 RequestPath = "/api/images"
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
