@@ -22,7 +22,6 @@ namespace WishListServer
                 options.KnownProxies.Clear();
             });
 
-            // Add services to the container.
             builder.Services.AddDbContext<ApplicationContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -34,9 +33,7 @@ namespace WishListServer
             builder.Services.AddSingleton<IFileManager, FileManager>();
 
             builder.Services.AddControllers();
-
             builder.Services.AddOpenApi();
-
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
             var app = builder.Build();
@@ -46,10 +43,10 @@ namespace WishListServer
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
                 dbContext.Database.Migrate();
             }
+
             app.UseForwardedHeaders();
 
-            app.MapOpenApi();
-            app.MapScalarApiReference();
+            app.UseRouting();
 
             app.UseStaticFiles(new StaticFileOptions
             {
@@ -58,11 +55,14 @@ namespace WishListServer
                 RequestPath = "/api/images"
             });
 
-            //app.UseHttpsRedirection();
+            app.MapOpenApi();
+            app.MapScalarApiReference();
 
             app.UseAuthorization();
 
+            // Эндпоинты (в конце)
             app.MapControllers();
+
             app.Run();
         }
     }
