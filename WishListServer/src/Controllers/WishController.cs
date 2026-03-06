@@ -13,9 +13,13 @@ namespace WishListServer.src.Controllers
     public class WishController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ILogger _logger;
 
-        public WishController(IMediator mediator) =>
-            _mediator = mediator;
+        public WishController(IMediator mediator, ILogger logger) 
+        { 
+            _mediator = mediator; 
+            _logger = logger;
+        }
 
         [HttpGet]
         public async Task<ActionResult<IReadOnlyCollection<WishDto>>> GetWishes(CancellationToken ct)
@@ -56,6 +60,32 @@ namespace WishListServer.src.Controllers
             IFormFile? image, 
             CancellationToken ct)
         {
+            // В твоем POST-методе добавь:
+            _logger.LogInformation("=== INCOMING REQUEST DEBUG ===");
+            _logger.LogInformation($"Method: {HttpContext.Request.Method}");
+            _logger.LogInformation($"Path: {HttpContext.Request.Path}");
+            _logger.LogInformation($"Content-Type: {HttpContext.Request.ContentType}");
+            _logger.LogInformation($"Content-Length: {HttpContext.Request.ContentLength}");
+
+            // Логируем заголовки (осторожно, не логируй токены!)
+            foreach (var header in HttpContext.Request.Headers)
+            {
+                if (!header.Key.Contains("Authorization", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogInformation($"Header: {header.Key} = {header.Value}");
+                }
+            }
+
+            // Если это multipart - логируем форму
+            if (HttpContext.Request.HasFormContentType)
+            {
+                _logger.LogInformation($"Form files count: {HttpContext.Request.Form.Files.Count}");
+                foreach (var file in HttpContext.Request.Form.Files)
+                {
+                    _logger.LogInformation($"File: {file.FileName}, Size: {file.Length}, Type: {file.ContentType}");
+                }
+            }
+            _logger.LogInformation("=== END REQUEST DEBUG ===");
             CreateWishCommand command = new CreateWishCommand(
                 wish.Title, 
                 wish.Description, 
