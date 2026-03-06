@@ -13,9 +13,9 @@ namespace WishListServer.src.Controllers
     public class WishController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
+        private readonly ILogger<WishController> _logger;
 
-        public WishController(IMediator mediator, ILogger logger) 
+        public WishController(IMediator mediator, ILogger<WishController> logger) 
         { 
             _mediator = mediator; 
             _logger = logger;
