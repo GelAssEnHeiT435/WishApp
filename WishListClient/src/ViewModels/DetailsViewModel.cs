@@ -31,7 +31,9 @@ namespace WishListClient.src.ViewModels
                 {
                     _wishId = value;
                     Wish = _wishlist.GetWishById(Guid.Parse(value))!;
-                    Image = ImageSource.FromUri(new Uri(Wish?.Url));
+
+                    if (Wish.Url != null) 
+                        Image = ImageSource.FromUri(new Uri(Wish?.Url));
                 }
             }
         }

@@ -17,9 +17,7 @@
             <Image Source="{Binding Image}"
                    Aspect="AspectFill"
                    HorizontalOptions="Fill"
-                   VerticalOptions="Fill"
-                   WidthRequest="200"
-                   HeightRequest="200">
+                   VerticalOptions="Fill">
             </Image>
         </Border>
 
