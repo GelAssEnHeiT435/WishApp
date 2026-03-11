@@ -19,10 +19,8 @@ namespace WishListClient.src.Services
 
         /// <summary>
         /// GET /api/wish/{wishId}
-        /// 
+        /// Get wish by Id
         /// </summary>
-        // Возвращаем IApiResponse, чтобы иметь возможность проверить статус 404 без исключения, 
-        // либо можно ловить ApiException снаружи.
         [Get("/api/wish/{wishId}")]
         Task<Wish> GetWishById(Guid wishId, CancellationToken ct = default);
 
@@ -42,22 +40,25 @@ namespace WishListClient.src.Services
             CancellationToken ct = default
         );
 
-        // PATCH /api/wish/{wishId}
-        //[Multipart]
-        //[Patch("/api/wish/{wishId}")]
-        //Task<UpdateWishResult> UpdateWish(
-        //    Guid wishId,
-        //    [AliasAs("Title")] string? title,
-        //    [AliasAs("Description")] string? description,
-        //    [AliasAs("IsRequired")] bool isRequired,
-        //    StreamPart? image, // Файл опционален. Если null, Refit может отправить пустую часть, проверьте поведение сервера.
-        //    CancellationToken ct = default
-        //);
+        /// <summary>
+        /// PATCH /api/wish/{wishId}
+        /// Update wish 
+        /// </summary>
+        [Multipart]
+        [Patch("/api/wish/{wishId}")]
+        Task<UpdateWishResponse> UpdateWish(
+            Guid wishId,
+            [AliasAs("Title")] string? title,
+            [AliasAs("Description")] string? description,
+            [AliasAs("IsRecieved")] bool isRecieved,
+            StreamPart? image,
+            CancellationToken ct = default
+        );
 
-        // DELETE /api/wish/{wishId}
-        // Возвращает Task, так как сервер возвращает 204 NoContent.
-        // При 404 или 400 будет выброшено ApiException.
-        //[Delete("/api/wish/{wishId}")]
-        //Task DeleteWish(Guid wishId, CancellationToken ct = default);
+        /// <summary>
+        /// DELETE /api/wish/{wishId}
+        /// </summary>
+        [Delete("/api/wish/{wishId}")]
+        Task DeleteWish(Guid wishId, CancellationToken ct = default);
     }
 }

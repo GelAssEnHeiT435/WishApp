@@ -39,7 +39,7 @@
                                       BackgroundColor="Transparent"
                                       IconColor="{StaticResource White}"
                                       BorderThickness="0"
-                                      Command="{Binding BindingContext.OnDeleteCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                      Command="{Binding BindingContext.DeleteCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                       ButtonSize="30"
                                       IconSize="25"/>
             </HorizontalStackLayout>

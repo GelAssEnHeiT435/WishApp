@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using WishListClient.src.Models;
+using static Android.Icu.Text.CaseMap;
 
 namespace WishListClient.src.Services
 {
@@ -52,6 +54,48 @@ namespace WishListClient.src.Services
                     Url = result.Path
                 };
                 Wishes.Add(wish);
+            }
+        }
+
+        public async Task UpdateWish(
+            Guid Id,
+            string title,
+            string? description,
+            bool isReceived,
+            StreamPart? image)
+        {
+            try
+            {
+                UpdateWishResponse response = await _api.UpdateWish(Id, title, description, isReceived, image);
+                Wish? wish = Wishes.FirstOrDefault(w => w.WishId == Id);
+
+                if (wish != null)
+                {
+                    wish.Title = title;
+                    wish.Description = description;
+                    wish.IsReceived = isReceived;
+                    wish.Url = response?.Path ?? null;
+                }
+
+            }
+            catch (ApiException ex)
+            {
+                await Shell.Current.DisplayAlert("Ошибка",
+                    $"Не удалось обновить желание: {title}", "ОК");
+            }
+        }
+
+        public async Task DeleteWish(Guid Id)
+        {
+            try
+            {
+                await _api.DeleteWish(Id);
+                Wishes.Remove(Wishes.FirstOrDefault(w => w.WishId == Id)!);
+            }
+            catch (ApiException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound) await Shell.Current.DisplayAlert("Ошибка", "Объект не найден!", "Ок");
+                await Shell.Current.DisplayAlert("Ошибка", "Проверьте соединение...", "Ок");
             }
         }
     }

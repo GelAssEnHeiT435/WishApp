@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,8 +33,10 @@ namespace WishListClient.src.ViewModels
                     _wishId = value;
                     Wish = _wishlist.GetWishById(Guid.Parse(value))!;
 
-                    if (Wish.Url != null) 
+                    if (Wish.Url != null)
                         Image = ImageSource.FromUri(new Uri(Wish?.Url));
+                    else
+                        Image = null;
                 }
             }
         }
@@ -46,6 +49,8 @@ namespace WishListClient.src.ViewModels
         [RelayCommand]
         private async Task OnDelete()
         {
+            Debug.WriteLine(Wish.WishId);
+            await _wishlist.DeleteWish(Wish.WishId);
             await Shell.Current.GoToAsync("..");
         }
 

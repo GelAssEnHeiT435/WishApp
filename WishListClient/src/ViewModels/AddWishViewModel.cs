@@ -35,7 +35,6 @@ namespace WishListClient.src.ViewModels
                     PageTitle = "Редактирование желания";
                     ButtonTitle = "Обновить";
                 }
-                else if (value.Equals("create")) PageTitle = "Создание желания";
                 _editMode = value;
             } 
         }
@@ -118,8 +117,12 @@ namespace WishListClient.src.ViewModels
         {
             StreamPart? imagePart = null;
 
-            if (Image != null) imagePart = await _converter.ImageSourceToStreamPartAsync(Image, _name, _contentType);
-            await _wishlist.CreateWish(Title, Description, IsReceived, imagePart);
+            if (Image != null && _name != null) imagePart = await _converter.ImageSourceToStreamPartAsync(Image, _name, _contentType);
+                
+            if(Mode.Equals("edit"))
+                await _wishlist.UpdateWish(Guid.Parse(WishId), Title, Description, IsReceived, imagePart);
+            else 
+                await _wishlist.CreateWish(Title, Description, IsReceived, imagePart);
 
             Image = null;
             Title = "";

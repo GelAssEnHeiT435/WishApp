@@ -24,7 +24,7 @@
                 </VerticalStackLayout>
                 
 
-                <CollectionView Grid.Row="1" 
+                <CollectionView Grid.Row="1" Margin="0, 10, 0, 0"
                                 ItemsSource="{Binding Wishes}">
 
                     <CollectionView.ItemsLayout>

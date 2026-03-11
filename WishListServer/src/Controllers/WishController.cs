@@ -93,7 +93,7 @@ namespace WishListServer.src.Controllers
             CancellationToken ct)
         {
             UpdateWishCommand command = new UpdateWishCommand(
-                wishId, wish.Title, wish.Description, wish.IsRequired, image);
+                wishId, wish.Title, wish.Description, wish.IsRecieved, image);
             
             try
             {
