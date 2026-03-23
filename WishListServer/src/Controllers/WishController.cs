@@ -66,14 +66,13 @@ namespace WishListServer.src.Controllers
         [HttpPost]
         public async Task<ActionResult<CreateWishResult?>> CreateWish(
             [FromForm] CreateWishDto wish, 
-            IFormFile? image, 
             CancellationToken ct)
         {
             CreateWishCommand command = new CreateWishCommand(
                 wish.Title, 
                 wish.Description, 
                 wish.IsRecieved, 
-                image
+                wish.Image
             );
 
             CreateWishResult? result = await _mediator.Send(command, ct);

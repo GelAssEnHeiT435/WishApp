@@ -31,7 +31,7 @@ namespace WishListClient.src.Services
             [AliasAs("Title")] string title,
             [AliasAs("Description")] string? description,
             [AliasAs("IsRecieved")] bool isRecieved,
-            [AliasAs("image")] StreamPart? image,
+            [AliasAs("Image")] StreamPart? image,
             CancellationToken ct = default
         );
 
