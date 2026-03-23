@@ -21,6 +21,10 @@ namespace WishListServer
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
             });
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.Limits.MaxRequestBodySize = 50 * 1024 * 1024; // 50 MB
+            });
 
             builder.Services.AddDbContext<ApplicationContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
