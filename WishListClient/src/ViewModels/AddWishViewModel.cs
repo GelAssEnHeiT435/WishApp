@@ -1,12 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Refit;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WishListClient.src.Interfaces;
 using WishListClient.src.Models;
 using WishListClient.src.Services;
@@ -47,9 +42,13 @@ namespace WishListClient.src.ViewModels
                 if (value != null && Mode.Equals("edit")) {
                     Wish wish = _wishlist.GetWishById(Guid.Parse(value))!;
                     Title = wish.Title;
-                    Description = wish.Description;
+                    Description = wish.Description ?? "";
                     IsReceived = wish.IsReceived;
-                    Image = ImageSource.FromUri(new Uri(wish?.Url));
+
+                    if (!string.IsNullOrEmpty(wish.Url))
+                        Image = ImageSource.FromUri(new Uri(wish.Url));
+                    else
+                        Image = null;
                 }
             }
         }
@@ -69,7 +68,7 @@ namespace WishListClient.src.ViewModels
         private string? _contentType { get; set; }
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(CreateWishCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ExceptWishCommand))]
         private string? _title;
 
         [ObservableProperty] private string? _description;
@@ -113,13 +112,13 @@ namespace WishListClient.src.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(canCreate))]
-        private async Task CreateWish()
+        private async Task ExceptWish()
         {
             StreamPart? imagePart = null;
 
             if (Image != null && _name != null) imagePart = await _converter.ImageSourceToStreamPartAsync(Image, _name, _contentType);
-                
-            if(Mode.Equals("edit"))
+
+            if (Mode.Equals("edit"))
                 await _wishlist.UpdateWish(Guid.Parse(WishId), Title, Description, IsReceived, imagePart);
             else 
                 await _wishlist.CreateWish(Title, Description, IsReceived, imagePart);
@@ -136,7 +135,10 @@ namespace WishListClient.src.ViewModels
         private async Task GoBack() =>
             await Shell.Current.GoToAsync("..");
 
-        private bool canCreate() =>
-            Title != null && !string.IsNullOrWhiteSpace(Title);
+        private bool canCreate()
+        {
+            Debug.WriteLine($">>> CanExecute: Title={Title}");
+            return Title != null && !string.IsNullOrWhiteSpace(Title);
+        }
     }
 }

@@ -31,13 +31,14 @@ namespace WishListClient
             builder.Services.AddRefitClient<IWishListApi>()
                 .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://194.67.127.232"));
 
-            builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddSingleton<AddWishViewModel>();
-            builder.Services.AddSingleton<DetailsViewModel>();
+            builder.Services.AddTransient<AddWishViewModel>();
+            builder.Services.AddTransient<AddWishPage>();
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<DetailsPage>();
-            builder.Services.AddSingleton<AddWishPage>();
+            builder.Services.AddTransient<MainViewModel>();
+            builder.Services.AddTransient<MainPage>();
+
+            builder.Services.AddTransient<DetailsViewModel>();
+            builder.Services.AddTransient<DetailsPage>();
 
             builder.Services.AddSingleton<AppShell>();
             builder.Services.AddSingleton<IImageConverter, ImageConverter>();

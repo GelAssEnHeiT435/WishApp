@@ -33,7 +33,7 @@ namespace WishListClient.src.ViewModels
                     _wishId = value;
                     Wish = _wishlist.GetWishById(Guid.Parse(value))!;
 
-                    if (Wish.Url != null)
+                    if (!string.IsNullOrEmpty(Wish.Url))
                         Image = ImageSource.FromUri(new Uri(Wish?.Url));
                     else
                         Image = null;
@@ -43,13 +43,16 @@ namespace WishListClient.src.ViewModels
         private string _wishId;
 
         [RelayCommand]
-        private async Task GoToEdit() =>
+        private async Task GoToEdit()
+        {
+            if (string.IsNullOrEmpty(WishId)) return;
             await Shell.Current.GoToAsync($"{nameof(AddWishPage)}?mode=edit&id={WishId}");
+        }
+            
 
         [RelayCommand]
         private async Task OnDelete()
         {
-            Debug.WriteLine(Wish.WishId);
             await _wishlist.DeleteWish(Wish.WishId);
             await Shell.Current.GoToAsync("..");
         }

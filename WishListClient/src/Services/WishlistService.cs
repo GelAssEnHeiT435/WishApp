@@ -7,7 +7,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using WishListClient.src.Models;
-using static Android.Icu.Text.CaseMap;
 
 namespace WishListClient.src.Services
 {

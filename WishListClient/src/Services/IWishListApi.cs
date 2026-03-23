@@ -1,9 +1,4 @@
 ﻿using Refit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WishListClient.src.Models;
 
 namespace WishListClient.src.Services
@@ -36,7 +31,7 @@ namespace WishListClient.src.Services
             [AliasAs("Title")] string title,
             [AliasAs("Description")] string? description,
             [AliasAs("IsRecieved")] bool isRecieved,
-            StreamPart? image,
+            [AliasAs("image")] StreamPart? image,
             CancellationToken ct = default
         );
 
@@ -45,10 +40,10 @@ namespace WishListClient.src.Services
         /// Update wish 
         /// </summary>
         [Multipart]
-        [Patch("/api/wish/{wishId}")]
+        [Patch("/api/wish")]
         Task<UpdateWishResponse> UpdateWish(
-            Guid wishId,
-            [AliasAs("Title")] string? title,
+            [AliasAs("WishId")] Guid wishId,
+            [AliasAs("Title")] string title,
             [AliasAs("Description")] string? description,
             [AliasAs("IsRecieved")] bool isRecieved,
             StreamPart? image,

@@ -38,7 +38,7 @@
         </HorizontalStackLayout>
 
         <VerticalStackLayout Spacing="15">
-            <Button Command="{Binding CreateWishCommand}"
+            <Button Command="{Binding ExceptWishCommand}"
                     Text="{Binding ButtonTitle}"/>
 
             <Button Command="{Binding GoBackCommand}"
