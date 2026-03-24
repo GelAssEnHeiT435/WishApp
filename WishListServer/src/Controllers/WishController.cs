@@ -96,7 +96,14 @@ namespace WishListServer.src.Controllers
             
             try
             {
-                return Ok(await _mediator.Send(command, ct));
+                UpdateWishResult result = await _mediator.Send(command, ct);
+
+                string? Path = result.Path != null
+                    ? $"{Request.Scheme}://{Request.Host}{result.Path}"
+                    : null;
+                result = result with { Path = Path };
+
+                return Ok(result);
             }
             catch (EntityNotFoundException ex)
             {

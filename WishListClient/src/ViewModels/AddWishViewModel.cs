@@ -40,10 +40,11 @@ namespace WishListClient.src.ViewModels
             set
             {
                 if (value != null && Mode.Equals("edit")) {
+                    _wishId = value;
                     Wish wish = _wishlist.GetWishById(Guid.Parse(value))!;
                     Title = wish.Title;
-                    Description = wish.Description ?? "";
-                    IsReceived = wish.IsReceived;
+                    Description = wish?.Description ?? "";
+                    IsReceived = wish?.IsReceived ?? false;
 
                     if (!string.IsNullOrEmpty(wish.Url))
                         Image = ImageSource.FromUri(new Uri(wish.Url));
@@ -114,9 +115,9 @@ namespace WishListClient.src.ViewModels
         [RelayCommand(CanExecute = nameof(canCreate))]
         private async Task ExceptWish()
         {
-            StreamPart? imagePart = null;
+            ByteArrayPart? imagePart = null;
 
-            if (Image != null && _name != null) imagePart = await _converter.ImageSourceToStreamPartAsync(Image, _name, _contentType);
+            if (Image != null && _name != null) imagePart = await _converter.ImageSourceToByteArrayPartAsync(Image, _name, _contentType);
 
             if (Mode.Equals("edit"))
                 await _wishlist.UpdateWish(Guid.Parse(WishId), Title, Description, IsReceived, imagePart);

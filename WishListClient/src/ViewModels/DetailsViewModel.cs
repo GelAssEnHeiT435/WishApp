@@ -20,8 +20,6 @@ namespace WishListClient.src.ViewModels
         public DetailsViewModel(WishlistService wishlist) =>
             _wishlist = wishlist;
 
-        [ObservableProperty] private ImageSource? _image;
-
         [ObservableProperty] private Wish _wish;
         public string WishId
         {
@@ -33,10 +31,10 @@ namespace WishListClient.src.ViewModels
                     _wishId = value;
                     Wish = _wishlist.GetWishById(Guid.Parse(value))!;
 
-                    if (!string.IsNullOrEmpty(Wish.Url))
-                        Image = ImageSource.FromUri(new Uri(Wish?.Url));
-                    else
-                        Image = null;
+                    //if (!string.IsNullOrEmpty(Wish.Url))
+                    //    Image = ImageSource.FromUri(new Uri(Wish?.Url));
+                    //else
+                    //    Image = null;
                 }
             }
         }

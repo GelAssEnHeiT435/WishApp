@@ -22,7 +22,7 @@
                 <Shadow Brush="Black" Offset="2,2" Radius="4" Opacity="0.3"/>
             </Border.Shadow>
 
-            <Image Source="{Binding Image}"
+            <Image Source="{Binding Wish.Image}"
                    Aspect="AspectFill"
                    HorizontalOptions="Fill"
                    VerticalOptions="Fill">

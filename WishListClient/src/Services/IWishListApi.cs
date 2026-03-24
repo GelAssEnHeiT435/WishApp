@@ -31,7 +31,7 @@ namespace WishListClient.src.Services
             [AliasAs("Title")] string title,
             [AliasAs("Description")] string? description,
             [AliasAs("IsRecieved")] bool isRecieved,
-            [AliasAs("Image")] StreamPart? image,
+            [AliasAs("Image")] ByteArrayPart? image,
             CancellationToken ct = default
         );
 
@@ -40,13 +40,13 @@ namespace WishListClient.src.Services
         /// Update wish 
         /// </summary>
         [Multipart]
-        [Patch("/api/wish")]
+        [Patch("/api/wish/{wishId}")]
         Task<UpdateWishResponse> UpdateWish(
-            [AliasAs("WishId")] Guid wishId,
+            Guid wishId,
             [AliasAs("Title")] string title,
             [AliasAs("Description")] string? description,
             [AliasAs("IsRecieved")] bool isRecieved,
-            StreamPart? image,
+            ByteArrayPart? image,
             CancellationToken ct = default
         );
 

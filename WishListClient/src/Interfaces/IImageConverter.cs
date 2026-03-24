@@ -9,6 +9,6 @@ namespace WishListClient.src.Interfaces
 {
     public interface IImageConverter
     {
-        Task<StreamPart> ImageSourceToStreamPartAsync(ImageSource imageSource, string fileName, string contentType);
+        Task<ByteArrayPart> ImageSourceToByteArrayPartAsync(ImageSource imageSource, string fileName, string contentType);
     }
 }

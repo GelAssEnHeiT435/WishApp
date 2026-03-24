@@ -29,7 +29,7 @@ namespace WishListClient.src.ViewModels
         [RelayCommand]
         private async Task GoToDetails(Wish wish)
         {
-            Debug.WriteLine(wish);
+            Debug.WriteLine(wish.WishId);
             if (wish != null) 
                 await Shell.Current.GoToAsync($"{nameof(DetailsPage)}?id={wish.WishId}");
         }

@@ -10,15 +10,13 @@ namespace WishListClient.src.Services
 {
     public class ImageConverter: IImageConverter
     {
-        public async Task<StreamPart> ImageSourceToStreamPartAsync(
+        public async Task<ByteArrayPart> ImageSourceToByteArrayPartAsync(
             ImageSource imageSource,
             string fileName = "image.jpg",
             string contentType = "image/jpeg")
         {
             var bytes = await ImageSourceToBytesAsync(imageSource);
-            var stream = new MemoryStream(bytes);
-
-            return new StreamPart(stream, fileName, contentType);
+            return new ByteArrayPart(bytes, fileName, contentType);
         }
 
         private async Task<byte[]> ImageSourceToBytesAsync(ImageSource imageSource)

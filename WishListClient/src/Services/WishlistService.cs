@@ -38,7 +38,7 @@ namespace WishListClient.src.Services
             string title, 
             string? description, 
             bool isReceived,
-            StreamPart? image)
+            ByteArrayPart? image)
         {
             CreateWishResponse? result = await _api.CreateWish(title, description, isReceived, image);
             
@@ -61,7 +61,7 @@ namespace WishListClient.src.Services
             string title,
             string? description,
             bool isReceived,
-            StreamPart? image)
+            ByteArrayPart? image)
         {
             try
             {
@@ -75,12 +75,15 @@ namespace WishListClient.src.Services
                     wish.IsReceived = isReceived;
                     wish.Url = response?.Path ?? null;
                 }
-
             }
             catch (ApiException ex)
             {
                 await Shell.Current.DisplayAlert("Ошибка",
                     $"Не удалось обновить желание: {title}", "ОК");
+            }
+            catch (Exception ex) {
+                await Shell.Current.DisplayAlert("Ошибка",
+                    ex.Message, "OK");
             }
         }
 
