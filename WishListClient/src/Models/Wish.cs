@@ -16,16 +16,13 @@ namespace WishListClient.src.Models
         [ObservableProperty] private bool isReceived;
         [ObservableProperty] private string? url;
 
-        // 🔥 Вычисляемое свойство — не хранится в памяти
         public ImageSource? Image =>
             !string.IsNullOrEmpty(Url)
                 ? ImageSource.FromUri(new Uri(Url))
                 : null;
 
-        // 🔥 Этот метод вызывается АВТОМАТИЧЕСКИ при изменении Url
         partial void OnUrlChanged(string? value)
         {
-            // Говорим UI, что Image тоже изменилось
             OnPropertyChanged(nameof(Image));
         }
     }

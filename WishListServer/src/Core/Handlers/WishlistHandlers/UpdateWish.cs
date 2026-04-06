@@ -7,10 +7,10 @@ using WishListServer.src.Data;
 using WishListServer.src.Data.Models.Common;
 using WishListServer.src.Data.Models.Database;
 
-namespace WishListServer.src.Core.Handlers
+namespace WishListServer.src.Core.Handlers.WishlistHandlers
 {
     public record class UpdateWishCommand(
-        Guid wishId, string? title, string? description,
+        Guid userId, Guid wishId, string? title, string? description, string? link,
         bool? IsReceived, IFormFile? image): IRequest<UpdateWishResult>;
 
     public class UpdateWishHandler : IRequestHandler<UpdateWishCommand, UpdateWishResult>
@@ -27,8 +27,11 @@ namespace WishListServer.src.Core.Handlers
         public async Task<UpdateWishResult> Handle(UpdateWishCommand request, CancellationToken ct)
         {
             Wish? wish = await _context.Wishes
+                .Include(w => w.Wishlist)
                 .Include(w => w.Image)
-                .FirstOrDefaultAsync(w => w.WishId == request.wishId, ct);
+                .FirstOrDefaultAsync(w => 
+                    w.WishId == request.wishId &&
+                    w.Wishlist.UserId == request.userId, ct);
 
             if (wish == null) throw new EntityNotFoundException(nameof(Wish), request.wishId);
 
@@ -50,6 +53,9 @@ namespace WishListServer.src.Core.Handlers
 
             if (!string.IsNullOrWhiteSpace(request.description) && !string.Equals(wish.Description, request.description, StringComparison.Ordinal))
                 wish.Description = request.description;
+
+            if (!string.IsNullOrWhiteSpace(request.description) && !string.Equals(wish.Description, request.description, StringComparison.Ordinal))
+                wish.Link = request.link;
 
             if (request.IsReceived.HasValue && wish.IsReceived != request.IsReceived.Value)
                 wish.IsReceived = request.IsReceived.Value;

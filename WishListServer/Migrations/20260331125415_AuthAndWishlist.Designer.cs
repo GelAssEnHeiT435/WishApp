@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WishListServer.src.Data;
@@ -11,9 +12,11 @@ using WishListServer.src.Data;
 namespace WishListServer.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20260331125415_AuthAndWishlist")]
+    partial class AuthAndWishlist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,10 +31,6 @@ namespace WishListServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -42,9 +41,6 @@ namespace WishListServer.Migrations
                     b.HasKey("CredId");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId", "Login")
                         .IsUnique();
 
                     b.ToTable("Credential");
@@ -103,9 +99,6 @@ namespace WishListServer.Migrations
 
                     b.Property<bool>("IsReceived")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Link")
-                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()

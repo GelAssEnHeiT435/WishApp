@@ -6,9 +6,9 @@ using WishListServer.src.Core.Interfaces;
 using WishListServer.src.Data;
 using WishListServer.src.Data.Models.Database;
 
-namespace WishListServer.src.Core.Handlers
+namespace WishListServer.src.Core.Handlers.WishlistHandlers
 {
-    public record class DeleteWishCommand(Guid wishId): IRequest;
+    public record class DeleteWishCommand(Guid userId, Guid wishId): IRequest;
 
     public class DeleteWishHandler : IRequestHandler<DeleteWishCommand>
     {
@@ -23,12 +23,19 @@ namespace WishListServer.src.Core.Handlers
 
         public async Task Handle(DeleteWishCommand request, CancellationToken ct)
         {
-            Wish? wish = await _context.Wishes
-                .Include(w => w.Image)
-                .FirstOrDefaultAsync(w => w.WishId == request.wishId);
+            var wish = await _context.Wishes
+               .Include(w => w.Image)
+               .Include(w => w.Wishlist)  // Важно для проверки UserId
+               .FirstOrDefaultAsync(w =>
+                   w.WishId == request.wishId &&
+                   w.Wishlist.UserId == request.userId 
+                );
 
-            if (wish == null) throw new EntityNotFoundException(nameof(Wish), request.wishId);
-            if (wish.Image != null) await _fileManager.DeleteImageAsync(wish.Image.Name, ct);
+            if (wish == null) 
+                throw new EntityNotFoundException(nameof(Wish), request.wishId);
+
+            if (wish.Image != null) 
+                await _fileManager.DeleteImageAsync(wish.Image.Name, ct);
 
             _context.Wishes.Remove(wish);
             await _context.SaveChangesAsync(ct);

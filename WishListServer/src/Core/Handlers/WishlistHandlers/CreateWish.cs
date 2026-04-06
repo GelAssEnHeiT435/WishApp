@@ -1,15 +1,18 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using WishListServer.src.Core.Exceptions;
 using WishListServer.src.Core.Interfaces;
 using WishListServer.src.Data;
 using WishListServer.src.Data.Models.Common;
 using WishListServer.src.Data.Models.Database;
-using WishListServer.src.Data.Models.Dto;
 
-namespace WishListServer.src.Core.Handlers
+namespace WishListServer.src.Core.Handlers.WishlistHandlers
 {
     public record class CreateWishCommand(
+        Guid userId,
         string title,
         string? description,
+        string? link,
         bool isRecieved,
         IFormFile? image): IRequest<CreateWishResult>;
 
@@ -29,10 +32,18 @@ namespace WishListServer.src.Core.Handlers
         {
             ImageUploadResult? imgObj = await _fileManager.SaveImageAsync(request?.image, ct);
 
+            Wishlist? list = await _context.Wishlists
+                .Include(w => w.Wishes)
+                .FirstOrDefaultAsync(w => w.UserId == request!.userId);
+
+            if (list == null)
+                throw new EntityNotFoundException();
+
             Wish wish = new Wish
             {
                 Title = request!.title,
                 Description = request.description,
+                Link = request.link,
                 IsReceived = request.isRecieved,
                 Image = imgObj?.RelativePath != null
                     ? new Image
@@ -42,7 +53,7 @@ namespace WishListServer.src.Core.Handlers
                     } : null
             };
 
-            _context.Wishes.Add(wish);
+            list.Wishes!.Add(wish);
             await _context.SaveChangesAsync(ct);
 
             return new CreateWishResult(wish.WishId, imgObj?.RelativePath);

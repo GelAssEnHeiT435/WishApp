@@ -1,0 +1,72 @@
+﻿@model WishListServer.src.Data.Models.Dto.WishlistDto
+
+@{
+    ViewData["Title"] = $"Вишлист: {Model.User.Username}";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <header class="wishlist-header">
+        <h1>Список желаний</h1>
+        <p class="owner">Пользователь: <strong>@Model.User.Username</strong></p>
+    </header>
+
+    <div class="items-grid">
+        @if (Model.Wishes != null && Model.Wishes.Any())
+        {
+            @foreach (var wish in Model.Wishes)
+            {
+                <div class="item-card @(wish.IsReceived ? "received" : "")">
+
+                    @* Изображение с плейсхолдером *@
+                    <div class="item-image-wrapper">
+                        @if (!string.IsNullOrEmpty(wish.Url))
+                        {
+                            <img src="@wish.Url" alt="@wish.Title" class="item-image" loading="lazy">
+                        }
+                        else
+                        {
+                            <div class="item-image-placeholder">🎁</div>
+                        }
+                    </div>
+
+                    @* Контент карточки *@
+                    <div class="item-content">
+                        <h3 class="item-title">@wish.Title</h3>
+
+                        <p class="item-desc @(string.IsNullOrEmpty(wish.Description) ? "empty" : "")">
+                            @(string.IsNullOrEmpty(wish.Description) ? "Описание отсутствует" : wish.Description)
+                        </p>
+
+                        @if (!string.IsNullOrEmpty(wish.Link))
+                        {
+                            <a href="@wish.Link" target="_blank" rel="noopener noreferrer" class="item-link">
+                                @wish.Link
+                            </a>
+                        }
+                    </div>
+
+                    @* Статус желания *@
+                    <div class="item-footer">
+                        @if (wish.IsReceived)
+                        {
+                            <span class="status-badge status-received">Уже есть</span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-active">В списке желаний</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="empty-message">В этом списке пока нет желаний 🎁</p>
+        }
+    </div>
+
+    <footer class="wishlist-footer">
+        <p>Wishlist App &copy; 2026</p>
+    </footer>
+</div>

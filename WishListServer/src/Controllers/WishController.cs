@@ -1,8 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WishListServer.src.Core.Exceptions;
-using WishListServer.src.Core.Handlers;
+using WishListServer.src.Core.Handlers.WishlistHandlers;
 using WishListServer.src.Data.Models.Common;
 using WishListServer.src.Data.Models.Dto;
 
@@ -10,6 +11,7 @@ namespace WishListServer.src.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WishController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -25,18 +27,16 @@ namespace WishListServer.src.Controllers
         public async Task<ActionResult<IReadOnlyCollection<WishDto>>> GetWishes(CancellationToken ct)
         {
             string url = $"{Request.Scheme}://{Request.Host}";
-            GetWishesCommand command = new GetWishesCommand(url);
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            GetWishesCommand command = new GetWishesCommand(userId, url);
 
-            try
-            {
+            try {
                 return Ok(await _mediator.Send(command, ct));
             }
-            catch (EntityNotFoundException ex)
-            {
+            catch (EntityNotFoundException ex) {
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
@@ -47,15 +47,52 @@ namespace WishListServer.src.Controllers
             CancellationToken ct)
         {
             string url = $"{Request.Scheme}://{Request.Host}";
-            GetWishByIdCommand command = new GetWishByIdCommand(wishId, url);
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            GetWishByIdCommand command = new GetWishByIdCommand(userId, wishId, url);
+
+            try {
+                return Ok(await _mediator.Send(command, ct));
+            }
+            catch (EntityNotFoundException ex) {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("share-link")]
+        public async Task<ActionResult<WishlistLinkDto>> GetShareLink(CancellationToken ct)
+        {
+            string url = $"{Request.Scheme}://{Request.Host}";
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            GetShareLinkCommand command = new GetShareLinkCommand(userId, url);
+
+            try {
+                return Ok(await _mediator.Send(command, ct));
+            }
+            catch (EntityNotFoundException) {
+                return NotFound("The user has no wishlists");
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("regenerate-link")]
+        public async Task<ActionResult<WishlistLinkDto>> RegenerateLink(CancellationToken ct)
+        {
+            string url = $"{Request.Scheme}://{Request.Host}";
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            RegenerateLinkCommand command = new RegenerateLinkCommand(userId, url);
 
             try
             {
                 return Ok(await _mediator.Send(command, ct));
             }
-            catch (EntityNotFoundException ex)
+            catch (EntityNotFoundException)
             {
-                return NotFound(ex.Message);
+                return NotFound("The user has no wishlists");
             }
             catch (Exception ex)
             {
@@ -68,20 +105,31 @@ namespace WishListServer.src.Controllers
             [FromForm] CreateWishDto wish, 
             CancellationToken ct)
         {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
             CreateWishCommand command = new CreateWishCommand(
+                userId,
                 wish.Title, 
                 wish.Description, 
+                wish.Link,
                 wish.IsRecieved, 
                 wish.Image
             );
 
-            CreateWishResult? result = await _mediator.Send(command, ct);
+            try {
+                CreateWishResult? result = await _mediator.Send(command, ct);
 
-            result.Path = result.Path != null
-                ? $"{Request.Scheme}://{Request.Host}{result.Path}"
-                : null;
+                result.Path = result.Path != null
+                    ? $"{Request.Scheme}://{Request.Host}{result.Path}"
+                    : null;
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException ex) {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPatch("{wishId:guid}")]
@@ -91,11 +139,12 @@ namespace WishListServer.src.Controllers
             IFormFile? image,
             CancellationToken ct)
         {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
             UpdateWishCommand command = new UpdateWishCommand(
-                wishId, wish.Title, wish.Description, wish.IsRecieved, image);
+                userId, wishId, wish.Title, wish.Description, wish.Link, wish.IsRecieved, image
+            );
             
-            try
-            {
+            try {
                 UpdateWishResult result = await _mediator.Send(command, ct);
 
                 string? Path = result.Path != null
@@ -105,12 +154,10 @@ namespace WishListServer.src.Controllers
 
                 return Ok(result);
             }
-            catch (EntityNotFoundException ex)
-            {
+            catch (EntityNotFoundException ex) {
                 return NotFound(ex.Message);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return BadRequest(ex.Message);
             }
         }
@@ -120,19 +167,17 @@ namespace WishListServer.src.Controllers
             Guid wishId,
             CancellationToken ct)
         {
-            DeleteWishCommand command = new DeleteWishCommand(wishId);
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            DeleteWishCommand command = new DeleteWishCommand(userId, wishId);
 
-            try
-            {
+            try {
                 await _mediator.Send(command, ct);
                 return NoContent();
             }
-            catch(EntityNotFoundException ex)
-            {
+            catch(EntityNotFoundException ex) {
                 return NotFound(ex.Message);
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex) {
                 return BadRequest(ex.Message);
             }
         }

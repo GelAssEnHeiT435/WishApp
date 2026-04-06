@@ -6,9 +6,9 @@ using WishListServer.src.Data.Models.Database;
 using WishListServer.src.Data.Models.Dto;
 using WishListServer.src.Data.Specifications;
 
-namespace WishListServer.src.Core.Handlers
+namespace WishListServer.src.Core.Handlers.WishlistHandlers
 {
-    public record class GetWishesCommand(string baseUrl): IRequest<IReadOnlyCollection<WishDto>>;
+    public record class GetWishesCommand(Guid userId, string baseUrl): IRequest<IReadOnlyCollection<WishDto>>;
     public class GetWishesHandler : IRequestHandler<GetWishesCommand, IReadOnlyCollection<WishDto>>
     {
         private readonly ApplicationContext _context;
@@ -19,7 +19,10 @@ namespace WishListServer.src.Core.Handlers
         public async Task<IReadOnlyCollection<WishDto>> Handle(GetWishesCommand request, CancellationToken cancellationToken)
         {
             IReadOnlyCollection<WishDto>? list = _context.Wishes
-                .AsNoTracking()
+                .AsNoTrackingWithIdentityResolution()
+                .Include(w => w.Wishlist)
+                .Include(w => w.Image)
+                .Where(w => w.Wishlist.UserId == request.userId)
                 .ToDto(request.baseUrl)
                 .ToList();
 
