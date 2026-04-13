@@ -11,7 +11,7 @@ namespace WishListServer.src.Core.Handlers.WishlistHandlers
 {
     public record class UpdateWishCommand(
         Guid userId, Guid wishId, string? title, string? description, string? link,
-        bool? IsReceived, IFormFile? image): IRequest<UpdateWishResult>;
+        bool? isReceived, IFormFile? image): IRequest<UpdateWishResult>;
 
     public class UpdateWishHandler : IRequestHandler<UpdateWishCommand, UpdateWishResult>
     {
@@ -57,8 +57,8 @@ namespace WishListServer.src.Core.Handlers.WishlistHandlers
             if (!string.IsNullOrWhiteSpace(request.description) && !string.Equals(wish.Description, request.description, StringComparison.Ordinal))
                 wish.Link = request.link;
 
-            if (request.IsReceived.HasValue && wish.IsReceived != request.IsReceived.Value)
-                wish.IsReceived = request.IsReceived.Value;
+            if (request.isReceived.HasValue && wish.IsReceived != request.isReceived.Value)
+                wish.IsReceived = request.isReceived.Value;
 
             await _context.SaveChangesAsync(ct);
             return new UpdateWishResult(newRelativePath);

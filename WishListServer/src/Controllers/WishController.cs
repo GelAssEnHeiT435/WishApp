@@ -111,7 +111,7 @@ namespace WishListServer.src.Controllers
                 wish.Title, 
                 wish.Description, 
                 wish.Link,
-                wish.IsRecieved, 
+                wish.IsReceived, 
                 wish.Image
             );
 
@@ -141,7 +141,7 @@ namespace WishListServer.src.Controllers
         {
             Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
             UpdateWishCommand command = new UpdateWishCommand(
-                userId, wishId, wish.Title, wish.Description, wish.Link, wish.IsRecieved, image
+                userId, wishId, wish.Title, wish.Description, wish.Link, wish.IsReceived, image
             );
             
             try {

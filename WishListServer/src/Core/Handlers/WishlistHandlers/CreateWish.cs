@@ -13,7 +13,7 @@ namespace WishListServer.src.Core.Handlers.WishlistHandlers
         string title,
         string? description,
         string? link,
-        bool isRecieved,
+        bool isReceived,
         IFormFile? image): IRequest<CreateWishResult>;
 
     public class CreateWishHandler : IRequestHandler<CreateWishCommand, CreateWishResult>
@@ -44,7 +44,7 @@ namespace WishListServer.src.Core.Handlers.WishlistHandlers
                 Title = request!.title,
                 Description = request.description,
                 Link = request.link,
-                IsReceived = request.isRecieved,
+                IsReceived = request.isReceived,
                 Image = imgObj?.RelativePath != null
                     ? new Image
                     {
