@@ -81,8 +81,6 @@ namespace WishListServer
 
             app.UseForwardedHeaders();
 
-           
-
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(

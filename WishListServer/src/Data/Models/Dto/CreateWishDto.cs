@@ -5,7 +5,7 @@
         public string Title { get; set; }
         public string? Description { get; set; }
         public string? Link { get; set; }
-        public bool IsRecieved { get; set; }
+        public bool IsReceived { get; set; }
 
         public IFormFile? Image { get; set; }
     }
