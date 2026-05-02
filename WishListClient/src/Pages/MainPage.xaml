@@ -6,18 +6,41 @@
              xmlns:models="clr-namespace:WishListClient.src.Models"
              x:Class="WishListClient.src.Pages.MainPage"
              Padding="0" x:Name="Root">
+    <ContentPage.Resources>
+        <toolkit:BoolToObjectConverter x:Key="IsValidConverter"
+            TrueObject="Получено"
+            FalseObject=""/>
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior 
+            EventName="Appearing"
+            Command="{Binding BindingContext.LoadWishListCommand, Source={x:Reference Root}}"/>
+    </ContentPage.Behaviors>
+    
     <AbsoluteLayout>
         <ContentView AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                      AbsoluteLayout.LayoutFlags="All">
 
             <Grid RowDefinitions="Auto, *">
                 <VerticalStackLayout>
-                    <Label TextColor="{StaticResource OnBackground}"
-                       VerticalOptions="Center"
-                       Text="Список желаний"
-                       FontAttributes="Bold"
-                       FontSize="28"
-                       Margin="20, 20, 20, 15"/>
+                    <HorizontalStackLayout Margin="20, 20, 20, 15"
+                                           Spacing="5">
+                        <Label TextColor="{StaticResource OnBackground}"
+                               VerticalOptions="Center"
+                               Text="Список желаний"
+                               FontAttributes="Bold"
+                               FontSize="28"/>
+                        
+                        <Component:IconButton 
+                            Data="{StaticResource ShareLink}"
+                            BackgroundColor="Transparent"
+                            IconColor="{StaticResource Primary}"
+                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.ShareCommand}"
+                            BorderThickness="0"
+                            ButtonSize="30"
+                            IconSize="25"/>
+                    </HorizontalStackLayout>
+                    
                     <BoxView BackgroundColor="{StaticResource Primary}"
                              HeightRequest="1"
                              Margin="15, 0"/>
@@ -52,10 +75,26 @@
                                             PressedScale="0.95"/>
                                     </Border.Behaviors>
 
-                                    <Label Text="{Binding Title}" 
-                                           HorizontalOptions="Start"
-                                           FontSize="16" Margin="10, 0"
-                                           TextColor="{StaticResource OnPrimary}"/>
+                                    <Grid ColumnDefinitions="*, Auto" 
+                                          HorizontalOptions="Fill">
+
+                                        <Label Grid.Column="0"
+                                               Text="{Binding Title}" 
+                                               HorizontalOptions="Start"
+                                               FontSize="16" 
+                                               Margin="10, 0" 
+                                               VerticalTextAlignment="Center"
+                                               TextColor="{StaticResource OnPrimary}"/>
+
+                                        <Label Grid.Column="1"
+                                               Text="{Binding IsReceived, Converter={StaticResource IsValidConverter}}" 
+                                               HorizontalOptions="End" 
+                                               HorizontalTextAlignment="End"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="12" 
+                                               TextColor="{StaticResource OnPrimary}"
+                                               Margin="10, 0, 10, 0"/>
+                                    </Grid>
                                 </Border>
                             </Grid>
                         </DataTemplate>
@@ -85,13 +124,6 @@
         <HorizontalStackLayout Spacing="5" Margin="20"
                                AbsoluteLayout.LayoutBounds="1, 1, -1, -1"
                                AbsoluteLayout.LayoutFlags="PositionProportional">
-            <Component:IconButton Data="{StaticResource Update}"
-                                  BackgroundColor="{StaticResource Tertiary}"
-                                  IconColor="{StaticResource White}"
-                                  BorderColor="{StaticResource MidnightBlue}"
-                                  Command="{Binding BindingContext.UpdateListCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                  ButtonSize="60"
-                                  IconSize="25"/>
 
             <Component:IconButton Data="{StaticResource Plus}"
                                   BackgroundColor="{StaticResource Tertiary}"
@@ -100,7 +132,6 @@
                                   Command="{Binding BindingContext.GoToAddWishCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                   ButtonSize="60"
                                   IconSize="25"/>
-
         </HorizontalStackLayout>
     </AbsoluteLayout>
 </ContentPage>

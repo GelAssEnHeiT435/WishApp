@@ -47,18 +47,27 @@ namespace WishListServer.src.Core.Handlers.WishlistHandlers
 
                 newRelativePath = imageResult.RelativePath;
             }
+            else
+            {
+                if (wish.Image != null)
+                {
+                    await _fileManager.DeleteImageAsync(wish.Image.Name!, ct);
+                    _context.Images.Remove(wish.Image);
+                    wish.Image = null;
+                }
+            }
 
-            if (!string.IsNullOrWhiteSpace(request.title) && !string.Equals(wish.Title, request.title, StringComparison.Ordinal))
-                wish.Title = request.title;
+            if (!string.IsNullOrWhiteSpace(request.title) && !string.Equals(wish.Title, request.title, StringComparison.Ordinal)) 
+                wish.Title = request.title; //обязательное поле. обновляем при изменении
 
-            if (!string.IsNullOrWhiteSpace(request.description) && !string.Equals(wish.Description, request.description, StringComparison.Ordinal))
-                wish.Description = request.description;
+            if (!string.Equals(wish.Description, request.description, StringComparison.Ordinal)) 
+                wish.Description = request.description; // обновляем только при изменении
 
-            if (!string.IsNullOrWhiteSpace(request.description) && !string.Equals(wish.Description, request.description, StringComparison.Ordinal))
-                wish.Link = request.link;
+            if (!string.Equals(wish.Description, request.description, StringComparison.Ordinal))
+                wish.Link = request.link; // обновляем только при изменении
 
             if (request.isReceived.HasValue && wish.IsReceived != request.isReceived.Value)
-                wish.IsReceived = request.isReceived.Value;
+                wish.IsReceived = request.isReceived.Value; // обновляем только при изменении
 
             await _context.SaveChangesAsync(ct);
             return new UpdateWishResult(newRelativePath);

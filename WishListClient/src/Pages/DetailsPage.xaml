@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:Component="clr-namespace:WishListClient.src.Components"
              xmlns:Converter="clr-namespace:WishListClient.src.Converters"
-             x:Class="WishListClient.src.Pages.DetailsPage">
+             x:Class="WishListClient.src.Pages.DetailsPage"
+             x:Name="Root">
     
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -11,8 +13,39 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     
-    <VerticalStackLayout>
-        <Border StrokeShape="RoundRectangle 0 0 20 20" 
+    <VerticalStackLayout Margin="20" Spacing="15">
+        <Grid>
+            <Component:IconButton 
+                Data="{StaticResource Back}"
+                HorizontalOptions="Start"
+                BackgroundColor="Transparent"
+                IconColor="{StaticResource White}"
+                BorderThickness="0"
+                Command="{Binding BindingContext.GoToBackCommand, Source={x:Reference Root}}"
+                ButtonSize="30"
+                IconSize="25"/>
+            
+            <HorizontalStackLayout HorizontalOptions="End"
+                                   Spacing="8">
+                <Component:IconButton 
+                    Data="{StaticResource Edit}"
+                    BackgroundColor="Transparent"
+                    IconColor="{StaticResource White}"
+                    BorderThickness="0"
+                    Command="{Binding BindingContext.GoToEditCommand, Source={x:Reference Root}}"
+                    ButtonSize="30" IconSize="25"/>
+
+                <Component:IconButton 
+                    Data="{StaticResource Delete}"
+                    BackgroundColor="Transparent"
+                    IconColor="#9F0000"
+                    BorderThickness="0"
+                    Command="{Binding BindingContext.DeleteCommand, Source={x:Reference Root}}"
+                    ButtonSize="30" IconSize="25"/>
+            </HorizontalStackLayout>
+        </Grid>
+        
+        <Border StrokeShape="RoundRectangle 20" 
                 StrokeThickness="2"
                 Stroke="{StaticResource Primary}"
                 HeightRequest="200"
@@ -29,46 +62,48 @@
             </Image>
         </Border>
 
-        <VerticalStackLayout Grid.Column="1" Margin="10"
-                             VerticalOptions="Center">
-            <HorizontalStackLayout Spacing="5" >
-                <Label Text="{Binding Wish.Title, Mode=TwoWay}"
-                   FontSize="26"/>
 
-                <Component:IconButton Data="{StaticResource Edit}"
-                                      BackgroundColor="Transparent"
-                                      IconColor="{StaticResource White}"
-                                      BorderThickness="0"
-                                      Command="{Binding BindingContext.GoToEditCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                      ButtonSize="30"
-                                      IconSize="25"/>
+        <Label Text="{Binding Wish.Title, Mode=TwoWay}"
+               FontSize="26"/>
 
-                <Component:IconButton Data="{StaticResource Delete}"
-                                      BackgroundColor="Transparent"
-                                      IconColor="{StaticResource White}"
-                                      BorderThickness="0"
-                                      Command="{Binding BindingContext.DeleteCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                      ButtonSize="30"
-                                      IconSize="25"/>
-            </HorizontalStackLayout>
-
-            <Label FontSize="16" Margin="0, 5, 0, 0"
+        <Label FontSize="16" Margin="0, 5, 0, 0"
                    Text="{Binding Wish.Description, Converter={StaticResource NullTextConverter}, ConverterParameter='Описание отсутствует'}"
                    TextColor="{Binding Wish.Description, Converter={StaticResource NullToColorConverter}}">
-            </Label>
-        </VerticalStackLayout>
+        </Label>
+
+        <BoxView BackgroundColor="{StaticResource Primary}"
+                 HeightRequest="1"/>
 
         <HorizontalStackLayout VerticalOptions="Center"
-                               Margin="0, -5, 0, 15">
+                               Margin="-12, 0">
             <CheckBox IsChecked="{Binding Wish.IsReceived, Mode=TwoWay}"
                       IsEnabled="False"/>
             <Label Text="Получено"
                    VerticalTextAlignment="Center"/>
         </HorizontalStackLayout>
 
-        <Button Command="{Binding GoToBackCommand}"
-                Text="Назад"
-                Margin="30, 0"/>
+        <Grid ColumnDefinitions="auto, *"
+              VerticalOptions="Center"
+              Margin="0, -5">
+            <Path Data="{StaticResource Link}" Grid.Column="0" Margin="0, 0, 5, 0"
+                  Fill="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}"
+                  Aspect="Uniform"
+                  WidthRequest="25"
+                  HeightRequest="25"/>
+            
+            <Label Text="{Binding Wish.Link}"
+                   HorizontalOptions="Fill"
+                   TextDecorations="Underline"
+                   VerticalTextAlignment="Center"
+                   TextColor="LightSkyBlue" Grid.Column="1"
+                   LineBreakMode="TailTruncation" MaxLines="1">
+                <Label.Behaviors>
+                    <toolkit:TouchBehavior 
+                        Command="{Binding BindingContext.OpenLinkCommand, Source={x:Reference Root}}"
+                        PressedBackgroundColor="{StaticResource Gray700}"/>
+                </Label.Behaviors>
+            </Label>
+        </Grid>
 
     </VerticalStackLayout>
 </ContentPage>

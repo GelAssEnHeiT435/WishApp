@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:component="clr-namespace:WishListClient.src.Components"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="WishListClient.src.Pages.RegisterPage"
+             x:Name="Root">
+    <VerticalStackLayout HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         WidthRequest="232"
+                         Spacing="16">
+        <Label Text="Регистрация"
+               HorizontalTextAlignment="Center"
+               FontSize="Large"/>
+
+        <Entry x:Name="LoginEntry"
+               toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference UsernameEntry}"
+               ReturnType="Next"
+               Placeholder="Логин"
+               Text="{Binding Login}">
+            <Entry.Behaviors>
+                <toolkit:TextValidationBehavior 
+                    MinimumLength="1"
+                    DecorationFlags="Trim" 
+                    Flags="ValidateOnValueChanged"
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"/>
+            </Entry.Behaviors>
+        </Entry>
+
+        <Entry x:Name="UsernameEntry"
+               toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference PasswordEntry}"
+               ReturnType="Next"
+               Placeholder="Имя пользователя"
+               Text="{Binding Username}">
+            <Entry.Behaviors>
+                <toolkit:TextValidationBehavior 
+                    MinimumLength="1"
+                    DecorationFlags="Trim" 
+                    Flags="ValidateOnValueChanged"
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"/>
+            </Entry.Behaviors>
+        </Entry>
+
+        <component:PasswordEntry 
+            x:Name="PasswordEntry"
+            toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference RetryPasswordEntry}"
+            ReturnType="Next"
+            Placeholder="Пароль"
+            Text="{Binding BindingContext.Password, Source={x:Reference Root}}"
+            IconColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+            IconSize="24"/>
+
+        <component:PasswordEntry 
+            x:Name="RetryPasswordEntry"
+            ReturnType="Done"
+            Placeholder="Повторите пароль"
+            Text="{Binding BindingContext.RetryPassword, Source={x:Reference Root}}"
+            IconColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+            IconSize="24"/>
+
+        <Button Text="Зарегистрироваться"
+                Command="{Binding RegisterExecuteCommand}"/>
+
+        <Label Text="Назад"
+               HorizontalTextAlignment="Center"
+               TextColor="{StaticResource SecondaryDarkText}">
+            <Label.Behaviors>
+                <toolkit:TouchBehavior
+                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToBackCommand}"
+                    PressedScale="0.95"/>
+            </Label.Behaviors>
+        </Label>
+    </VerticalStackLayout>
+</ContentPage>

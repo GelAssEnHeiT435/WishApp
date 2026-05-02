@@ -1,34 +1,53 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:Component="clr-namespace:WishListClient.src.Components"
              x:Class="WishListClient.src.Pages.AddWishPage">
-    <VerticalStackLayout Margin="20">
+
+    <VerticalStackLayout Margin="20" Spacing="8">
         
         <Label Text="{Binding PageTitle}" 
                FontAttributes="Bold"
                FontSize="28"/>
 
-        <Grid ColumnDefinitions="auto, *"
-              Margin="0">
-            <Component:ImageLoaderButton ButtonSize="100"
-                                         IconData="{StaticResource AddImage}"
-                                         IconColor="{StaticResource White}"
-                                         Command="{Binding BindingContext.PickPhotoCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                         PhotoSource="{Binding BindingContext.Image, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
+        <Component:ImageLoaderButton 
+            Margin="0, 20" HeightRequest="175"
+            IconData="{StaticResource AddImage}"
+            IconColor="{StaticResource White}"
+            Command="{Binding BindingContext.PickPhotoCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+            PhotoSource="{Binding BindingContext.Image, Source={RelativeSource AncestorType={x:Type ContentPage}}}"/>
 
-            <VerticalStackLayout Grid.Column="1"
-                                 VerticalOptions="Center"
-                                 Spacing="10"
-                                 Margin="15">
-                <Entry Placeholder="Наименование"
-                       Text="{Binding Title, UpdateSourceEventName=TextChanged, Mode=TwoWay}"/>
+        <Entry Placeholder="Наименование" 
+               Text="{Binding Title, UpdateSourceEventName=TextChanged, Mode=TwoWay}">
+            <Entry.Behaviors>
+                <toolkit:TextValidationBehavior 
+                    MinimumLength="1"
+                    DecorationFlags="Trim" 
+                    Flags="ValidateOnValueChanged"
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"/>
+            </Entry.Behaviors>
+        </Entry>
 
-                <Editor Placeholder="Описание"
-                        Text="{Binding Description, Mode=TwoWay}"
-                        HeightRequest="75"/>
-            </VerticalStackLayout>
-        </Grid>
+        <Editor x:Name="DescEntry"
+                Placeholder="Описание"
+                Text="{Binding Description, Mode=TwoWay}"
+                HeightRequest="75"/>
+
+        <Entry x:Name="LinkEntry"
+               Placeholder="https://..."
+               Text="{Binding Link, Mode=TwoWay}"
+               Keyboard="Url">
+            <Entry.Behaviors>
+                <toolkit:UriValidationBehavior 
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"
+                    Flags="ValidateOnValueChanged"
+                    RegexPattern="^https?://.+"
+                    UriKind="Absolute"/>
+            </Entry.Behaviors>
+        </Entry>
 
         <HorizontalStackLayout VerticalOptions="Center"
                                Margin="0, -5, 0, 15">
@@ -42,7 +61,7 @@
                     Text="{Binding ButtonTitle}"/>
 
             <Button Command="{Binding GoBackCommand}"
-                    Text="Назад"/>
+                    Text="Отмена"/>
         </VerticalStackLayout>
         
     </VerticalStackLayout>

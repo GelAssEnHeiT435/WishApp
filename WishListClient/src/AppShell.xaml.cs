@@ -8,6 +8,7 @@ namespace WishListClient
         {
             InitializeComponent();
 
+            Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
             Routing.RegisterRoute(nameof(AddWishPage), typeof(AddWishPage));
             Routing.RegisterRoute(nameof(DetailsPage), typeof(DetailsPage));
         }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:component="clr-namespace:WishListClient.src.Components"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="WishListClient.src.Pages.LoginPage"
+             x:Name="Root">
+    <VerticalStackLayout HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         WidthRequest="232"
+                         Spacing="16">
+        <Label Text="Авторизация"
+               HorizontalTextAlignment="Center"
+               FontSize="Large"/>
+
+        <Entry x:Name="LoginEntry"
+               toolkit:SetFocusOnEntryCompletedBehavior.NextElement="{x:Reference PasswordEntry}"
+               ReturnType="Next"
+               Placeholder="Логин"
+               Text="{Binding Login}">
+            <Entry.Behaviors>
+                <toolkit:TextValidationBehavior 
+                    MinimumLength="1"
+                    DecorationFlags="Trim" 
+                    Flags="ValidateOnValueChanged"
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"/>
+            </Entry.Behaviors>
+        </Entry>
+
+        <component:PasswordEntry 
+            x:Name="PasswordEntry"
+            ReturnType="Done"
+            Placeholder="Пароль"
+            Text="{Binding BindingContext.Password, Source={x:Reference Root}}"
+            IconColor="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"
+            IconSize="24"/>
+
+        <Button Text="Авторизироваться"
+                Command="{Binding LoginExecuteCommand}"/>
+
+        <Label Text="Зарегистрироваться"
+               HorizontalTextAlignment="Center"
+               TextColor="{StaticResource SecondaryDarkText}">
+            <Label.Behaviors>
+                <toolkit:TouchBehavior
+                    Command="{Binding Source={x:Reference Root}, Path=BindingContext.ToRegisterCommand}"
+                    PressedScale="0.95"/>
+            </Label.Behaviors>
+        </Label>
+    </VerticalStackLayout>
+</ContentPage>

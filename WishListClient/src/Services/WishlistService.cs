@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using WishListClient.src.Interfaces;
 using WishListClient.src.Models;
 
 namespace WishListClient.src.Services
@@ -13,21 +14,33 @@ namespace WishListClient.src.Services
     public class WishlistService
     {
         private readonly IWishListApi _api;
+        private readonly IExceptionHandler _exHandler;
         public ObservableCollection<Wish> Wishes { get; } = new();
 
-        public WishlistService(IWishListApi api)
+        public WishlistService(IWishListApi api, IExceptionHandler exHandler)
         {
             _api = api;
+            _exHandler = exHandler;
         }
 
         public async Task GetAllWishesAsync()
         {
-            Wishes.Clear();
-            IReadOnlyCollection<Wish> list = await _api.GetWishes();
-
-            foreach (Wish wish in list)
+            try 
             {
-                Wishes.Add(wish);
+                Wishes.Clear();
+                IReadOnlyCollection<Wish> list = await _api.GetWishes();
+
+                foreach (Wish wish in list)
+                {
+                    Wishes.Add(wish);
+                }
+            }
+            catch (Exception ex) 
+            {
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
             }
         }
 
@@ -37,22 +50,34 @@ namespace WishListClient.src.Services
         public async Task CreateWish(
             string title, 
             string? description, 
+            string? link,
             bool isReceived,
             ByteArrayPart? image)
         {
-            CreateWishResponse? result = await _api.CreateWish(title, description, isReceived, image);
-            
-            if(result != null)
+            try
             {
-                Wish wish = new Wish()
+                CreateWishResponse? result = await _api.CreateWish(title, description, link, isReceived, image);
+
+                if (result != null)
                 {
-                    WishId = result.WishId,
-                    Title = title,
-                    Description = description,
-                    IsReceived = isReceived,
-                    Url = result.Path
-                };
-                Wishes.Add(wish);
+                    Wish wish = new Wish()
+                    {
+                        WishId = result.WishId,
+                        Title = title,
+                        Description = description,
+                        Link = link,
+                        IsReceived = isReceived,
+                        Url = result.Path
+                    };
+                    Wishes.Add(wish);
+                }
+            }
+            catch (Exception ex)
+            {
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
             }
         }
 
@@ -60,30 +85,30 @@ namespace WishListClient.src.Services
             Guid Id,
             string title,
             string? description,
+            string? link,
             bool isReceived,
             ByteArrayPart? image)
         {
             try
             {
-                UpdateWishResponse response = await _api.UpdateWish(Id, title, description, isReceived, image);
+                UpdateWishResponse response = await _api.UpdateWish(Id, title, description, link, isReceived, image);
                 Wish? wish = Wishes.FirstOrDefault(w => w.WishId == Id);
 
                 if (wish != null)
                 {
                     wish.Title = title;
                     wish.Description = description;
+                    wish.Link = link;
                     wish.IsReceived = isReceived;
                     wish.Url = response?.Path ?? null;
                 }
             }
-            catch (ApiException ex)
+            catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Ошибка",
-                    $"Не удалось обновить желание: {title}", "ОК");
-            }
-            catch (Exception ex) {
-                await Shell.Current.DisplayAlert("Ошибка",
-                    ex.Message, "OK");
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
             }
         }
 
@@ -94,11 +119,47 @@ namespace WishListClient.src.Services
                 await _api.DeleteWish(Id);
                 Wishes.Remove(Wishes.FirstOrDefault(w => w.WishId == Id)!);
             }
-            catch (ApiException ex)
+            catch (Exception ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound) await Shell.Current.DisplayAlert("Ошибка", "Объект не найден!", "Ок");
-                await Shell.Current.DisplayAlert("Ошибка", "Проверьте соединение...", "Ок");
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
             }
         }
+
+        public async Task<string?> GetLink()
+        {
+            try {
+                ShareResponse result = await _api.GetShareLink();
+                return result?.url ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
+                return null;
+            }
+        }
+            
+
+        public async Task<string?> RegenerateLink()
+        {
+            try {
+                ShareResponse result = await _api.RegenerateShareLink();
+                return result?.url ?? string.Empty;
+            }
+            catch (Exception ex)
+            {
+                string? message = _exHandler.GetMessageException(ex);
+
+                if (!string.IsNullOrEmpty(message))
+                    await Shell.Current.DisplayAlert("Ошибка", message, "OK");
+                return null;
+            }
+        }
+            
     }
 }

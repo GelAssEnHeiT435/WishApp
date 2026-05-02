@@ -1,4 +1,6 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Controls.Shapes;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace WishListClient.src.Components;
@@ -9,11 +11,10 @@ public partial class ImageLoaderButton : ContentView
 
     public static readonly BindableProperty PhotoSourceProperty =
         BindableProperty.Create(
-            nameof(PhotoSource),
-            typeof(ImageSource),
-            typeof(ImageLoaderButton),
-            null,
-            BindingMode.TwoWay);
+            nameof(PhotoSource), typeof(ImageSource),
+            typeof(ImageLoaderButton), null,
+            BindingMode.TwoWay, 
+            propertyChanged: OnChangedPhoto);
 
     public static readonly BindableProperty CommandProperty =
         BindableProperty.Create(
@@ -29,6 +30,13 @@ public partial class ImageLoaderButton : ContentView
             typeof(ImageLoaderButton),
             null);
 
+    public static readonly BindableProperty DeleteCommandProperty =
+    BindableProperty.Create(
+        nameof(DeleteCommand),
+        typeof(ICommand),
+        typeof(ImageLoaderButton),
+        null);
+
     public static readonly BindableProperty IconDataProperty =
         BindableProperty.Create(
             nameof(IconData),
@@ -43,9 +51,15 @@ public partial class ImageLoaderButton : ContentView
             typeof(ImageLoaderButton),
             Colors.White);
 
-    public static readonly BindableProperty ButtonSizeProperty =
+    public static readonly BindableProperty WidthProperty =
         BindableProperty.Create(
-            nameof(ButtonSize),
+            nameof(Width),
+            typeof(double),
+            typeof(ImageLoaderButton));
+
+    public static readonly BindableProperty HeightProperty =
+        BindableProperty.Create(
+            nameof(Height),
             typeof(double),
             typeof(ImageLoaderButton),
             120.0);
@@ -72,6 +86,12 @@ public partial class ImageLoaderButton : ContentView
         set => SetValue(CommandParameterProperty, value);
     }
 
+    public ICommand DeleteCommand
+    {
+        get => (ICommand)GetValue(DeleteCommandProperty);
+        set => SetValue(DeleteCommandProperty, value);
+    }
+
     public Geometry? IconData
     {
         get => (Geometry?)GetValue(IconDataProperty);
@@ -84,10 +104,16 @@ public partial class ImageLoaderButton : ContentView
         set => SetValue(IconColorProperty, value);
     }
 
-    public double ButtonSize
+    public double Width
     {
-        get => (double)GetValue(ButtonSizeProperty);
-        set => SetValue(ButtonSizeProperty, value);
+        get => (double)GetValue(WidthProperty);
+        set => SetValue(WidthProperty, value);
+    }
+
+    public double Height
+    {
+        get => (double)GetValue(HeightProperty);
+        set => SetValue(HeightProperty, value);
     }
 
     #endregion
@@ -96,6 +122,26 @@ public partial class ImageLoaderButton : ContentView
     {
         InitializeComponent();
         BindingContext = this;
+
+        SetValue(DeleteCommandProperty, new Command(() => {
+            PhotoSource = null;
+        }));
     }
 
+    private static void OnChangedPhoto(BindableObject bindable, object oldValue, object newValue)
+    {
+        if (bindable is ImageLoaderButton button && button.Icon != null)
+        {
+            if (newValue != null)
+            {
+                button.Icon.IsVisible = false;
+                button.DeleteButton.IsVisible = true;
+            }
+            else
+            {
+                button.Icon.IsVisible = true;
+                button.DeleteButton.IsVisible = false;
+            }
+        }
+    }
 }

@@ -30,15 +30,21 @@ namespace WishListClient.src.ViewModels
                 {
                     _wishId = value;
                     Wish = _wishlist.GetWishById(Guid.Parse(value))!;
-
-                    //if (!string.IsNullOrEmpty(Wish.Url))
-                    //    Image = ImageSource.FromUri(new Uri(Wish?.Url));
-                    //else
-                    //    Image = null;
                 }
             }
         }
         private string _wishId;
+
+        [RelayCommand]
+        private async Task OpenLink()
+        {
+            try {
+                await Launcher.OpenAsync(new Uri(Wish?.Link!));
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"Ошибка открытия ссылки: {ex.Message}");
+            }
+        }
 
         [RelayCommand]
         private async Task GoToEdit()
@@ -46,7 +52,6 @@ namespace WishListClient.src.ViewModels
             if (string.IsNullOrEmpty(WishId)) return;
             await Shell.Current.GoToAsync($"{nameof(AddWishPage)}?mode=edit&id={WishId}");
         }
-            
 
         [RelayCommand]
         private async Task OnDelete()

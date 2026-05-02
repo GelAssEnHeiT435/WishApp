@@ -44,6 +44,8 @@ namespace WishListClient.src.ViewModels
                     Wish wish = _wishlist.GetWishById(Guid.Parse(value))!;
                     Title = wish.Title;
                     Description = wish?.Description ?? "";
+                    Link = wish?.Link ?? "";
+                    Link = wish?.Link ?? "";
                     IsReceived = wish?.IsReceived ?? false;
 
                     if (!string.IsNullOrEmpty(wish.Url))
@@ -73,6 +75,7 @@ namespace WishListClient.src.ViewModels
         private string? _title;
 
         [ObservableProperty] private string? _description;
+        [ObservableProperty] private string? _link;
         [ObservableProperty] private bool _isReceived = false;
         #endregion
 
@@ -120,13 +123,14 @@ namespace WishListClient.src.ViewModels
             if (Image != null && _name != null) imagePart = await _converter.ImageSourceToByteArrayPartAsync(Image, _name, _contentType);
 
             if (Mode.Equals("edit"))
-                await _wishlist.UpdateWish(Guid.Parse(WishId), Title, Description, IsReceived, imagePart);
+                await _wishlist.UpdateWish(Guid.Parse(WishId), Title, Description, Link, IsReceived, imagePart);
             else 
-                await _wishlist.CreateWish(Title, Description, IsReceived, imagePart);
+                await _wishlist.CreateWish(Title, Description, Link, IsReceived, imagePart);
 
             Image = null;
-            Title = "";
-            Description = "";
+            Title = string.Empty;
+            Description = string.Empty;
+            Link = string.Empty;
             IsReceived = false;
 
             await Shell.Current.GoToAsync("..");
@@ -136,10 +140,7 @@ namespace WishListClient.src.ViewModels
         private async Task GoBack() =>
             await Shell.Current.GoToAsync("..");
 
-        private bool canCreate()
-        {
-            Debug.WriteLine($">>> CanExecute: Title={Title}");
-            return Title != null && !string.IsNullOrWhiteSpace(Title);
-        }
+        private bool canCreate() =>
+            !string.IsNullOrWhiteSpace(Title);
     }
 }
